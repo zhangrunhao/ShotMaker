@@ -80,6 +80,8 @@ struct HighlightClipReviewView: View {
                     }
                 },
             )
+            // Continuous confirmation must recreate the timeline state and media-loading tasks.
+            .id(destination.id)
         }
         .onChange(of: editorDestination?.id) { previousID, currentID in
             guard let previousID, currentID == nil else {

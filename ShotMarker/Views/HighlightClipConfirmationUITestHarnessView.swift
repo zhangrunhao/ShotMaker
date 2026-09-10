@@ -16,6 +16,14 @@
         }
 
         var body: some View {
+            if ProcessInfo.processInfo.environment["SHOTMARKER_UI_TEST_CLIP_MEDIA"] == "1" {
+                HighlightClipMediaUITestHarnessView()
+            } else {
+                gallery
+            }
+        }
+
+        private var gallery: some View {
             NavigationStack {
                 HighlightClipReviewView(
                     viewModel: reviewViewModel,
