@@ -57,8 +57,26 @@ final class VideoClipPhotoLibrarySaverTests: XCTestCase {
             let entry = logger.entry(named: "photos.save.failed")
             XCTAssertEqual(entry?.level, .error)
             XCTAssertEqual(entry?.category, .photos)
-            XCTAssertEqual(entry?.errorDomain, NSURLErrorDomain)
-            XCTAssertEqual(entry?.errorCode, NSURLErrorNotConnectedToInternet)
+            XCTAssertNotEqual(entry?.errorDomain, NSURLErrorDomain)
+            XCTAssertEqual(entry?.context["errorCategory"], "saveFailed")
+        }
+    }
+
+    func testSaveFailureLogDoesNotContainPrivateSourceMetadata() async {
+        let logger = SpyAppLogger()
+        let sensitive = "private-photo-id /private/media/movie.mov"
+        let saver = VideoClipPhotoLibrarySaver(requestAuthorization: { .authorized },
+            saveVideoToLibrary: { _ in
+                throw NSError(domain: sensitive, code: 1, userInfo: [NSLocalizedDescriptionKey: sensitive])
+            }, logger: logger)
+        do {
+            try await saver.saveVideo(at: URL(fileURLWithPath: "/tmp/fixture.mov"))
+            XCTFail("Expected save failure")
+        } catch {
+            let entry = logger.entry(named: "photos.save.failed")
+            XCTAssertNotNil(entry)
+            XCTAssertFalse(entry?.errorDescription?.contains(sensitive) ?? true)
+            XCTAssertNotEqual(entry?.errorDomain, sensitive)
         }
     }
 

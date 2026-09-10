@@ -6,12 +6,12 @@ protocol TrainingSessionImporting {
 
 final class TrainingSessionImporter: TrainingSessionImporting {
     private let store: TrainingSessionStoreProtocol
-    private let reviewStore: any HighlightClipReviewStoring
+    private let reviewStore: (any HighlightClipReviewStoring)?
     private let logger: AppLogging
 
     init(
         store: TrainingSessionStoreProtocol,
-        reviewStore: any HighlightClipReviewStoring,
+        reviewStore: (any HighlightClipReviewStoring)? = nil,
         logger: AppLogging = AppLogger.shared,
     ) {
         self.store = store
@@ -48,7 +48,7 @@ final class TrainingSessionImporter: TrainingSessionImporting {
         }
 
         do {
-            try await reviewStore.deleteRecords(forTrainingSessionID: session.id)
+            try await reviewStore?.deleteRecords(forTrainingSessionID: session.id)
         } catch {
             logger.error(
                 "highlight.review.cleanup.failed",

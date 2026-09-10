@@ -3,6 +3,32 @@ import WatchConnectivity
 import XCTest
 
 final class PhoneWatchSyncServiceTests: XCTestCase {
+    func testCutoverAcknowledgesOldPayloadWithoutImportOrAnalytics() async throws {
+        let payload = try makePayload()
+        let importer = SpyTrainingSessionImporter()
+        let analytics = SpyAnalyticsTracker()
+        let connectivity = FakePhoneWatchConnectivitySession(isSupported: true)
+        let service = PhoneWatchSyncService(importer: importer, session: connectivity,
+            analytics: analytics, dataCutoverAt: payload.endedAt)
+        await service.handleReceivedUserInfo(try makeCompletedTrainingSessionUserInfo(payload: payload))
+        XCTAssertTrue(importer.importedPayloads.isEmpty)
+        XCTAssertTrue(analytics.events.isEmpty)
+        XCTAssertEqual(connectivity.transferredUserInfos.count, 1)
+    }
+
+    func testAfterCutoverPayloadImportsAndRecordsSuccess() async throws {
+        let payload = try makePayload()
+        let importer = SpyTrainingSessionImporter()
+        let analytics = SpyAnalyticsTracker()
+        let connectivity = FakePhoneWatchConnectivitySession(isSupported: true)
+        let service = PhoneWatchSyncService(importer: importer, session: connectivity,
+            analytics: analytics, dataCutoverAt: payload.endedAt.addingTimeInterval(-0.001))
+        await service.handleReceivedUserInfo(try makeCompletedTrainingSessionUserInfo(payload: payload))
+        XCTAssertEqual(importer.importedPayloads, [payload])
+        XCTAssertEqual(analytics.events, [.trainingSyncSucceeded])
+        XCTAssertEqual(connectivity.transferredUserInfos.count, 1)
+    }
+
     func testStartActivatesSupportedSession() {
         let session = FakePhoneWatchConnectivitySession(isSupported: true)
         let service = PhoneWatchSyncService(

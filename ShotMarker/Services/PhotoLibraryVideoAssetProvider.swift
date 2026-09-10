@@ -152,11 +152,12 @@
         func requestAVAsset(
             for asset: PHAsset,
             deliveryQuality: HighlightClipPhotoLibraryDeliveryQuality,
+            allowsNetworkAccess: Bool = true,
             progressHandler: (@Sendable (Double) -> Void)? = nil,
         ) async throws -> AVAsset {
             let options = PHVideoRequestOptions()
             options.deliveryMode = deliveryQuality.photoVideoRequestDeliveryMode
-            options.isNetworkAccessAllowed = true
+            options.isNetworkAccessAllowed = allowsNetworkAccess
             if let progressHandler {
                 options.progressHandler = { progress, _, _, _ in
                     progressHandler(progress)

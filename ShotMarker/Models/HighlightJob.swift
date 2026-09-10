@@ -131,7 +131,7 @@ enum HighlightJobStatus: String, Codable, Equatable {
     }
 }
 
-struct HighlightJobProgress: Codable, Equatable {
+nonisolated struct HighlightJobProgress: Codable, Equatable, Sendable {
     var completedMarkerCount: Int
     var totalMarkerCount: Int
 

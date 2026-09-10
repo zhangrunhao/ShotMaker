@@ -287,10 +287,12 @@ final class HighlightClipReviewMediaProvider {
         static func live(
             cacheLimit: Int = 64,
             photoLibraryAssetProvider: PhotoLibraryVideoAssetProvider = PhotoLibraryVideoAssetProvider(),
+            loadTaskAsset: LoadAsset? = nil,
         ) -> HighlightClipReviewMediaProvider {
             HighlightClipReviewMediaProvider(
                 cacheLimit: cacheLimit,
                 loadAsset: { video in
+                    if let loadTaskAsset { return try await loadTaskAsset(video) }
                     if let fileURL = URL(string: video.id), fileURL.isFileURL {
                         guard FileManager.default.fileExists(atPath: fileURL.path) else {
                             throw HighlightClipReviewMediaError.sourceUnavailable

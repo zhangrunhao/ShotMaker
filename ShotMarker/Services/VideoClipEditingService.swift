@@ -78,11 +78,13 @@ nonisolated struct HighlightClipMarkerLabelOverlayMetrics: Equatable {
 
 struct VideoClipEditingService {
     private let logger: AppLogging
+    private let requestedOutputURL: URL?
     private let exportAsset: (AVAssetExportSession, URL, AVFileType) async throws -> Void
     private let cancelExportSession: (AVAssetExportSession) -> Void
 
     init(
         logger: AppLogging = AppLogger.shared,
+        outputURL: URL? = nil,
         exportAsset: @escaping (AVAssetExportSession, URL, AVFileType) async throws -> Void = { exportSession, outputURL, fileType in
             try await exportSession.export(to: outputURL, as: fileType)
         },
@@ -91,6 +93,7 @@ struct VideoClipEditingService {
         },
     ) {
         self.logger = logger
+        requestedOutputURL = outputURL
         self.exportAsset = exportAsset
         self.cancelExportSession = cancelExportSession
     }
@@ -203,8 +206,6 @@ struct VideoClipEditingService {
                 context: [
                     "operation": "testClip",
                     "segmentIndex": "\(index + 1)",
-                    "segmentStartSeconds": Self.secondsString(segment.start),
-                    "segmentDurationSeconds": Self.secondsString(segment.duration),
                 ],
             )
         }
@@ -311,8 +312,6 @@ struct VideoClipEditingService {
                     "operation": "highlightClip",
                     "segmentIndex": "\(index + 1)",
                     "markerCount": "\(segment.coveredMarkerCount)",
-                    "segmentStartSeconds": Self.secondsString(segment.start),
-                    "segmentDurationSeconds": Self.secondsString(segment.duration),
                 ],
             )
         }
@@ -359,8 +358,12 @@ struct VideoClipEditingService {
             throw VideoClipEditingError.exportSessionUnavailable
         }
 
-        let outputURL = FileManager.default.temporaryDirectory
+        let outputURL = requestedOutputURL ?? FileManager.default.temporaryDirectory
             .appendingPathComponent("\(outputNamePrefix)-\(UUID().uuidString).mov")
+        var outputSucceeded = false
+        defer {
+            if !outputSucceeded { try? FileManager.default.removeItem(at: outputURL) }
+        }
         exportSession.videoComposition = videoComposition
         logger.info(
             "video.export.started",
@@ -438,6 +441,7 @@ struct VideoClipEditingService {
             ],
         )
 
+        outputSucceeded = true
         return outputURL
     }
 
@@ -483,8 +487,8 @@ struct VideoClipEditingService {
             "video.export.failed",
             category: .video,
             message: "视频导出失败",
-            error: error,
-            context: ["operation": operation],
+            error: error as? VideoClipEditingError ?? .exportFailed,
+            context: ["operation": operation, "errorCategory": error is CancellationError ? "cancelled" : "exportFailed"],
         )
     }
 
@@ -674,6 +678,7 @@ enum VideoClipEditingError: LocalizedError {
     case missingVideoTrack
     case compositionTrackUnavailable
     case exportSessionUnavailable
+    case exportFailed
 
     var errorDescription: String? {
         switch self {
@@ -685,6 +690,8 @@ enum VideoClipEditingError: LocalizedError {
             "无法创建视频拼接轨道。"
         case .exportSessionUnavailable:
             "无法创建视频导出任务。"
+        case .exportFailed:
+            "视频生成失败，请重试。"
         }
     }
 }

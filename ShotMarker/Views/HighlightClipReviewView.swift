@@ -10,17 +10,20 @@ struct HighlightClipReviewView: View {
 
     private let makePlaybackController: () -> HighlightClipPlaybackController
     private let loadsMedia: Bool
+    private let generationButtonTitle: String
     private let onRequestVideoReselection: () -> Void
 
     init(
         viewModel: HighlightClipReviewViewModel,
         makePlaybackController: @escaping () -> HighlightClipPlaybackController,
         loadsMedia: Bool = true,
+        generationButtonTitle: String = "确认并生成",
         onRequestVideoReselection: @escaping () -> Void = {},
     ) {
         self.viewModel = viewModel
         self.makePlaybackController = makePlaybackController
         self.loadsMedia = loadsMedia
+        self.generationButtonTitle = generationButtonTitle
         self.onRequestVideoReselection = onRequestVideoReselection
     }
 
@@ -152,7 +155,7 @@ struct HighlightClipReviewView: View {
     private func thumbnailLoadingCard(for item: HighlightClipReviewItem) -> some View {
         if loadsMedia {
             reviewCard(for: item)
-                .task(id: item.range) {
+                .task(id: ThumbnailLoadIdentity(viewModel: ObjectIdentifier(viewModel), range: item.range)) {
                     await viewModel.loadThumbnail(
                         itemID: item.id,
                         targetSize: .init(width: 360, height: 204),
@@ -161,6 +164,11 @@ struct HighlightClipReviewView: View {
         } else {
             reviewCard(for: item)
         }
+    }
+
+    private struct ThumbnailLoadIdentity: Equatable {
+        let viewModel: ObjectIdentifier
+        let range: HighlightClipRange
     }
 
     private func reviewCard(for item: HighlightClipReviewItem) -> some View {
@@ -338,7 +346,7 @@ struct HighlightClipReviewView: View {
                     if viewModel.isSubmitting {
                         ProgressView()
                     }
-                    Text(viewModel.isSubmitting ? "正在创建…" : "确认并生成")
+                    Text(viewModel.isSubmitting ? "正在准备生成…" : generationButtonTitle)
                         .fontWeight(.semibold)
                 }
                 .frame(maxWidth: .infinity, minHeight: 44)

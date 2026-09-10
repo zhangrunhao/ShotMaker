@@ -22,7 +22,7 @@ enum TrainingSessionJSONTransferError: LocalizedError, Equatable {
 
 struct TrainingSessionJSONTransferService {
     private let store: TrainingSessionStoreProtocol
-    private let reviewStore: any HighlightClipReviewStoring
+    private let reviewStore: (any HighlightClipReviewStoring)?
     private let notificationCenter: NotificationCenter
     private let logger: AppLogging
     private let decoder = JSONDecoder()
@@ -30,7 +30,7 @@ struct TrainingSessionJSONTransferService {
 
     init(
         store: TrainingSessionStoreProtocol,
-        reviewStore: any HighlightClipReviewStoring,
+        reviewStore: (any HighlightClipReviewStoring)? = nil,
         notificationCenter: NotificationCenter = .default,
         logger: AppLogging = AppLogger.shared,
     ) {
@@ -116,7 +116,7 @@ struct TrainingSessionJSONTransferService {
         var failureCount = 0
         for id in trainingSessionIDs {
             do {
-                try await reviewStore.deleteRecords(forTrainingSessionID: id)
+                try await reviewStore?.deleteRecords(forTrainingSessionID: id)
             } catch {
                 failureCount += 1
                 failureCategories.insert(Self.reviewCleanupErrorCategory(error))

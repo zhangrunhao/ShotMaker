@@ -90,11 +90,13 @@ enum HighlightClipReviewPlanner {
         for session: TrainingSession,
         videos: [SelectedTrainingVideo],
         clipSettings: ClipSettings,
+        markerOrder: [UUID: Int]? = nil,
     ) -> HighlightClipReviewDraft {
         let legacyPlan = VideoClipSegmentPlanner.highlightPlan(
             for: session,
             videos: videos,
             clipSettings: clipSettings,
+            markerOrder: markerOrder,
         )
         let eventsByID = session.events.reduce(into: [UUID: ShotMarkerEvent]()) { result, event in
             result[event.id] = event
@@ -204,8 +206,8 @@ enum HighlightClipReviewPlanner {
             guard let video = videosByID[item.videoID] else {
                 throw HighlightClipReviewPlanningError.sourceVideoMissing
             }
-            let normalizedStart = normalizedTenths(item.start)
-            let normalizedEnd = normalizedTenths(item.range.end)
+            let normalizedStart = video.duration < 1 ? 0 : normalizedTenths(item.start)
+            let normalizedEnd = video.duration < 1 ? video.duration : min(normalizedTenths(item.range.end), video.duration)
             let normalizedRange = try validatedRange(
                 HighlightClipRange(
                     start: normalizedStart,
@@ -310,7 +312,7 @@ enum HighlightClipReviewPlanner {
                 videoDuration: video.duration,
             )
             guard isNormalizedTenth(range.start),
-                  isNormalizedTenth(range.duration)
+                  isNormalizedTenth(range.duration) || abs(range.end - video.duration) < 0.000_000_1
             else {
                 throw HighlightClipReviewPlanningError.invalidRange
             }

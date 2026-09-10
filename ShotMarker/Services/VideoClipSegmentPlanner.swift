@@ -5,7 +5,7 @@ struct VideoClipSegment: Equatable {
     let duration: TimeInterval
 }
 
-struct SelectedTrainingVideo: Identifiable, Equatable {
+nonisolated struct SelectedTrainingVideo: Identifiable, Equatable, Sendable {
     let id: String
     let recordedStartAt: Date
     let duration: TimeInterval
@@ -144,11 +144,13 @@ enum VideoClipSegmentPlanner {
         for session: TrainingSession,
         videos: [SelectedTrainingVideo],
         clipSettings: ClipSettings = .default,
+        markerOrder: [UUID: Int]? = nil,
     ) -> HighlightClipPlan {
         let events = session.events.sorted {
             let lhsMilliseconds = HighlightClipReviewIdentityBuilder.milliseconds($0.markedAt)
             let rhsMilliseconds = HighlightClipReviewIdentityBuilder.milliseconds($1.markedAt)
             if lhsMilliseconds == rhsMilliseconds {
+                if let markerOrder { return (markerOrder[$0.id] ?? .max) < (markerOrder[$1.id] ?? .max) }
                 return $0.id.uuidString < $1.id.uuidString
             }
             return lhsMilliseconds < rhsMilliseconds

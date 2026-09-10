@@ -1,6 +1,6 @@
 import Foundation
 
-struct ClipSettings: Codable, Equatable {
+nonisolated struct ClipSettings: Codable, Equatable, Sendable {
     var secondsBeforeMarker: TimeInterval
     var secondsAfterMarker: TimeInterval
     var markerLabelStyle: MarkerLabelStyle

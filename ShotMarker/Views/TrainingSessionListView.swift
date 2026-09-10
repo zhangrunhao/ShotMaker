@@ -54,7 +54,7 @@ struct TrainingSessionNavigationState: Equatable {
 
 struct TrainingSessionListView: View {
     @StateObject private var viewModel: TrainingSessionListViewModel
-    @ObservedObject private var highlightJobManager: HighlightJobManager
+    @ObservedObject private var highlightTaskManager: HighlightTaskManager
     @State private var isImportingTrainingSessions = false
     @State private var isExportingTrainingSessions = false
     @State private var isConfirmingTrainingSessionDeletion = false
@@ -69,11 +69,12 @@ struct TrainingSessionListView: View {
     @State private var highlightPlaybackErrorMessage: String?
     @State private var pressFeedbackState = TrainingSessionPressFeedbackState()
     @State private var titlePressFeedbackState = TrainingSessionTitlePressFeedbackState()
+    @State private var taskNavigationTarget: TrainingSessionNavigationTarget?
     @State private var navigationState = TrainingSessionNavigationState()
     private let diagnosticsSnapshotProvider: (() -> PhoneWatchSyncDiagnosticsSnapshot)?
     private let logger: AppLogging
     private let logExportService: AppLogExportService?
-    private let reviewStore: any HighlightClipReviewStoring
+    private let reviewStore: (any HighlightClipReviewStoring)?
 
     @MainActor
     init(
@@ -81,15 +82,15 @@ struct TrainingSessionListView: View {
         diagnosticsSnapshotProvider: (() -> PhoneWatchSyncDiagnosticsSnapshot)? = nil,
         logger: AppLogging = AppLogger.shared,
         logExportService: AppLogExportService? = nil,
-        highlightJobManager: HighlightJobManager? = nil,
-        reviewStore: any HighlightClipReviewStoring,
+        highlightTaskManager: HighlightTaskManager? = nil,
+        reviewStore: (any HighlightClipReviewStoring)? = nil,
     ) {
         self.diagnosticsSnapshotProvider = diagnosticsSnapshotProvider
         self.logger = logger
         self.logExportService = logExportService
         self.reviewStore = reviewStore
-        let resolvedHighlightJobManager = Self.resolvedHighlightJobManager(highlightJobManager, logger: logger)
-        _highlightJobManager = ObservedObject(wrappedValue: resolvedHighlightJobManager)
+        let resolvedHighlightTaskManager = Self.resolvedHighlightTaskManager(highlightTaskManager, logger: logger)
+        _highlightTaskManager = ObservedObject(wrappedValue: resolvedHighlightTaskManager)
         _viewModel = StateObject(wrappedValue: TrainingSessionListViewModel(
             store: store,
             reviewStore: reviewStore,
@@ -103,15 +104,15 @@ struct TrainingSessionListView: View {
         diagnosticsSnapshotProvider: (() -> PhoneWatchSyncDiagnosticsSnapshot)? = nil,
         logger: AppLogging = AppLogger.shared,
         logExportService: AppLogExportService? = nil,
-        highlightJobManager: HighlightJobManager? = nil,
-        reviewStore: any HighlightClipReviewStoring,
+        highlightTaskManager: HighlightTaskManager? = nil,
+        reviewStore: (any HighlightClipReviewStoring)? = nil,
     ) {
         self.diagnosticsSnapshotProvider = diagnosticsSnapshotProvider
         self.logger = logger
         self.logExportService = logExportService
         self.reviewStore = reviewStore
-        let resolvedHighlightJobManager = Self.resolvedHighlightJobManager(highlightJobManager, logger: logger)
-        _highlightJobManager = ObservedObject(wrappedValue: resolvedHighlightJobManager)
+        let resolvedHighlightTaskManager = Self.resolvedHighlightTaskManager(highlightTaskManager, logger: logger)
+        _highlightTaskManager = ObservedObject(wrappedValue: resolvedHighlightTaskManager)
         _viewModel = StateObject(wrappedValue: viewModel)
     }
 
@@ -131,7 +132,13 @@ struct TrainingSessionListView: View {
             .navigationDestination(item: navigationTargetBinding) { target in
                 destination(for: target.id)
             }
+            .navigationDestination(item: $taskNavigationTarget) { target in
+                if let task = highlightTaskManager.task(target.id) {
+                    HighlightTaskEditorView(task: task, manager: highlightTaskManager) { taskNavigationTarget = nil }
+                }
+            }
             .task {
+                if !highlightTaskManager.isLoaded { await highlightTaskManager.load() }
                 await viewModel.load()
             }
             .toolbar {
@@ -258,7 +265,7 @@ struct TrainingSessionListView: View {
     @ViewBuilder
     private var content: some View {
         if let errorMessage = viewModel.errorMessage {
-            if highlightJobManager.jobs.isEmpty {
+            if highlightTaskManager.tasks.isEmpty && highlightTaskManager.errorMessage == nil {
                 ContentUnavailableView("无法加载训练记录", systemImage: "exclamationmark.triangle", description: Text(errorMessage))
             } else {
                 List {
@@ -267,7 +274,7 @@ struct TrainingSessionListView: View {
                 }
             }
         } else if viewModel.isEmpty {
-            if highlightJobManager.jobs.isEmpty {
+            if highlightTaskManager.tasks.isEmpty && highlightTaskManager.errorMessage == nil {
                 ContentUnavailableView("暂无训练记录", systemImage: "applewatch", description: Text("结束一次手表训练后，训练记录会显示在这里。"))
             } else {
                 List {
@@ -300,21 +307,17 @@ struct TrainingSessionListView: View {
     }
 
     private var highlightJobSection: some View {
-        HighlightJobListSection(
-            jobs: highlightJobManager.jobs,
-            photoLibrarySavingJobIDs: highlightJobManager.photoLibrarySavingJobIDs,
-            onCancel: { highlightJobManager.cancel(jobID: $0) },
-            onRestart: { jobID in
-                Task { await highlightJobManager.restart(jobID: jobID) }
-            },
-            onPlay: { jobID in
-                playHighlightJob(jobID)
-            },
-            onSave: { jobID in
-                Task { await highlightJobManager.saveToPhotoLibrary(jobID: jobID) }
-            },
-            onClear: { highlightJobManager.clear(jobID: $0) },
-        )
+        Section("集锦任务") {
+            if let error = highlightTaskManager.errorMessage {
+                Text(error).foregroundStyle(.secondary)
+                Button("重新加载任务") { Task { await highlightTaskManager.load() } }
+            }
+            ForEach(highlightTaskManager.tasks) { task in
+                HighlightTaskRow(task: task, manager: highlightTaskManager,
+                    onEdit: { taskNavigationTarget = TrainingSessionNavigationTarget(id: task.id) },
+                    onPlay: { playHighlightJob(task.id) })
+            }
+        }
     }
 
     private func unavailableRow(_ title: String, systemImage: String, description: String) -> some View {
@@ -388,8 +391,9 @@ struct TrainingSessionListView: View {
             if let session = viewModel.session(for: sessionID) {
                 TrainingSessionHighlightView(
                     session: session,
-                    highlightJobManager: highlightJobManager,
+                    highlightTaskManager: highlightTaskManager,
                     reviewStore: reviewStore,
+                    onExit: { navigationState.clear() },
                 )
             } else {
                 ContentUnavailableView("无法加载训练记录", systemImage: "exclamationmark.triangle")
@@ -425,24 +429,24 @@ struct TrainingSessionListView: View {
     @MainActor
     private func playHighlightJob(_ jobID: UUID) {
         do {
-            highlightPlaybackURL = try highlightJobManager.playbackURL(for: jobID)
+            highlightPlaybackURL = try highlightTaskManager.playbackURL(taskID: jobID)
         } catch {
             highlightPlaybackErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
     }
 
     @MainActor
-    private static func resolvedHighlightJobManager(
-        _ highlightJobManager: HighlightJobManager?,
+    private static func resolvedHighlightTaskManager(
+        _ highlightTaskManager: HighlightTaskManager?,
         logger: AppLogging,
-    ) -> HighlightJobManager {
-        guard let highlightJobManager else {
-            let manager = HighlightJobManager.live(logger: logger)
-            manager.load()
+    ) -> HighlightTaskManager {
+        guard let highlightTaskManager else {
+            let manager = HighlightTaskManager.live(logger: logger)
+            Task { await manager.load() }
             return manager
         }
 
-        return highlightJobManager
+        return highlightTaskManager
     }
 
     private var selectionActionBar: some View {

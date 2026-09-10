@@ -295,6 +295,23 @@ final class VideoClipEditingServiceTests: XCTestCase {
         }
     }
 
+    func testExportFailureLogDoesNotIncludeSourceErrorIdentityOrPath() async {
+        let logger = SpyAppLogger()
+        let sensitive = "private-asset-id /private/media/source.mov"
+        do {
+            _ = try await VideoClipEditingService(logger: logger).makeHighlightClip(from: [
+                HighlightClipSegment(markerIDs: [UUID()], videoID: "fixture", start: 0, duration: 1),
+            ], markerLabelStyle: .default) { _ in
+                throw NSError(domain: sensitive, code: 1, userInfo: [NSLocalizedDescriptionKey: sensitive])
+            }
+            XCTFail("Expected source failure")
+        } catch {
+            let entry = logger.entry(named: "video.export.failed")
+            XCTAssertNotNil(entry)
+            XCTAssertFalse(entry?.errorDescription?.contains(sensitive) ?? true)
+        }
+    }
+
     func testMakeHighlightClipCancelsExportSessionWhenTaskIsCancelled() async throws {
         let sourceURL = temporaryDirectory.appendingPathComponent("highlight-cancel-source.mov")
         try await makeSilentVideo(at: sourceURL, duration: 8)

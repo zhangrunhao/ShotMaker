@@ -13,8 +13,8 @@ struct ContentView: View {
     private let logger: AppLogging
     private let logExportService: AppLogExportService?
     #if os(iOS)
-        private let highlightJobManager: HighlightJobManager?
-        private let reviewStore: any HighlightClipReviewStoring
+        private let highlightTaskManager: HighlightTaskManager?
+        private let reviewStore: (any HighlightClipReviewStoring)?
     #endif
 
     @MainActor
@@ -23,15 +23,15 @@ struct ContentView: View {
         syncService: PhoneWatchSyncService? = nil,
         logger: AppLogging = AppLogger.shared,
         logExportService: AppLogExportService? = nil,
-        highlightJobManager: HighlightJobManager? = nil,
-        reviewStore: any HighlightClipReviewStoring,
+        highlightTaskManager: HighlightTaskManager? = nil,
+        reviewStore: (any HighlightClipReviewStoring)? = nil,
     ) {
         self.store = store
         self.syncService = syncService
         self.logger = logger
         self.logExportService = logExportService
         #if os(iOS)
-            self.highlightJobManager = highlightJobManager
+            self.highlightTaskManager = highlightTaskManager
             self.reviewStore = reviewStore
         #endif
     }
@@ -42,7 +42,7 @@ struct ContentView: View {
             diagnosticsSnapshotProvider: syncService?.diagnosticsSnapshot,
             logger: logger,
             logExportService: logExportService,
-            highlightJobManager: highlightJobManager,
+            highlightTaskManager: highlightTaskManager,
             reviewStore: reviewStore,
         )
     }

@@ -30,13 +30,15 @@ final class HighlightClipReviewViewModel: ObservableObject {
     let mediaProvider: HighlightClipReviewMediaProvider
     private(set) var videos: [SelectedTrainingVideo]
 
-    private let combinationKey: HighlightClipReviewCombinationKey
-    private let reviewStore: any HighlightClipReviewStoring
+    private let combinationKey: HighlightClipReviewCombinationKey?
+    private let reviewStore: (any HighlightClipReviewStoring)?
+    private let persistConfirmation: ((HighlightClipReviewItem) async throws -> Void)?
     private let now: () -> Date
     private let inputFingerprint: HighlightClipReviewInputFingerprint
     private let submitSegments: SubmitSegments
     private let onSubmissionSucceeded: () -> Void
     private var thumbnailTasks: [UUID: Task<Void, Never>] = [:]
+    private var thumbnailRecency: [UUID] = []
     private var thumbnailTargetSizes: [UUID: CGSize] = [:]
     private var filmstripTasks: [UUID: Task<Void, Never>] = [:]
     private var filmstripRequestIDs: [UUID: UUID] = [:]
@@ -45,8 +47,9 @@ final class HighlightClipReviewViewModel: ObservableObject {
         draft: HighlightClipReviewDraft,
         videos: [SelectedTrainingVideo],
         clipSettings: ClipSettings,
-        combinationKey: HighlightClipReviewCombinationKey,
-        reviewStore: any HighlightClipReviewStoring,
+        combinationKey: HighlightClipReviewCombinationKey? = nil,
+        reviewStore: (any HighlightClipReviewStoring)? = nil,
+        persistConfirmation: ((HighlightClipReviewItem) async throws -> Void)? = nil,
         recoveryNoticeMessage: String? = nil,
         mediaProvider: HighlightClipReviewMediaProvider,
         now: @escaping () -> Date = Date.init,
@@ -57,6 +60,7 @@ final class HighlightClipReviewViewModel: ObservableObject {
         self.videos = videos
         self.combinationKey = combinationKey
         self.reviewStore = reviewStore
+        self.persistConfirmation = persistConfirmation
         self.recoveryNoticeMessage = recoveryNoticeMessage
         self.mediaProvider = mediaProvider
         self.now = now
@@ -153,6 +157,8 @@ final class HighlightClipReviewViewModel: ObservableObject {
         filmstripTasks[itemID] = nil
         filmstripRequestIDs[itemID] = nil
         filmstripLoadingItemIDs.remove(itemID)
+        filmstripFramesByItemID[itemID] = nil
+        filmstripWindowsByItemID[itemID] = nil
     }
 
     func markSourceUnavailable(itemID: UUID) {
@@ -236,23 +242,30 @@ final class HighlightClipReviewViewModel: ObservableObject {
                 sourceValidationSucceeded = true
             }
 
-            let videoIdentity = try HighlightClipReviewIdentityBuilder.videoIdentity(for: video)
-            let confirmationDate = now()
-            let confirmation = PersistedHighlightClipConfirmation(
-                videoIdentity: videoIdentity,
-                markerIDs: currentItem.markerReferences.map(\.id),
-                defaultStart: currentItem.defaultStart,
-                defaultDuration: currentItem.defaultDuration,
-                start: candidate.start,
-                duration: candidate.duration,
-                isIncluded: candidate.isIncluded,
-                confirmedAt: confirmationDate,
-            )
-            try await reviewStore.upsert(
-                confirmation,
-                for: combinationKey,
-                now: confirmationDate,
-            )
+            if let persistConfirmation {
+                try await persistConfirmation(candidate)
+            } else if let combinationKey, let reviewStore {
+                let videoIdentity = try HighlightClipReviewIdentityBuilder.videoIdentity(for: video)
+                let confirmationDate = now()
+                let confirmation = PersistedHighlightClipConfirmation(
+                    videoIdentity: videoIdentity,
+                    markerIDs: currentItem.markerReferences.map(\.id),
+                    defaultStart: currentItem.defaultStart,
+                    defaultDuration: currentItem.defaultDuration,
+                    start: candidate.start,
+                    duration: candidate.duration,
+                    isIncluded: candidate.isIncluded,
+                    confirmedAt: confirmationDate,
+                )
+                try await reviewStore.upsert(
+                    confirmation,
+                    for: combinationKey,
+                    now: confirmationDate,
+                )
+
+            } else {
+                throw HighlightTaskError.persistence
+            }
 
             candidate.confirmationState = .confirmed
             items[index] = candidate
@@ -342,6 +355,14 @@ final class HighlightClipReviewViewModel: ObservableObject {
         filmstripRequestIDs.removeAll()
         filmstripLoadingItemIDs.removeAll()
         mediaProvider.removeAllCachedResources()
+        thumbnailStates.removeAll()
+        thumbnailTargetSizes.removeAll()
+        thumbnailRecency.removeAll()
+        filmstripFramesByItemID.removeAll()
+        filmstripWindowsByItemID.removeAll()
+        unavailableItemIDs.removeAll()
+        itemErrorMessages.removeAll()
+        editingItemID = nil
     }
 
     private func refreshSummary() {
@@ -409,6 +430,11 @@ final class HighlightClipReviewViewModel: ObservableObject {
             )
             try Task.checkCancellation()
             thumbnailStates[item.id] = .loaded(data)
+            thumbnailRecency.removeAll { $0 == item.id }
+            thumbnailRecency.append(item.id)
+            while thumbnailRecency.count > 64 {
+                thumbnailStates[thumbnailRecency.removeFirst()] = .idle
+            }
             if unavailableItemIDs.remove(item.id) != nil {
                 itemErrorMessages[item.id] = nil
             }
@@ -520,6 +546,7 @@ final class HighlightClipReviewViewModel: ObservableObject {
             || error is HighlightClipReviewPlanningError
             || error is HighlightClipReviewMediaError
             || error is HighlightClipReviewStoreError
+            || error is HighlightTaskError
         {
             return userFacingMessage(for: error)
         }

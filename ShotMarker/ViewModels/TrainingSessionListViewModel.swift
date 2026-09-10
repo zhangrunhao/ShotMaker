@@ -46,7 +46,7 @@ final class TrainingSessionListViewModel: ObservableObject {
     @Published private(set) var selectedSessionIDs: Set<UUID> = []
 
     private let store: TrainingSessionStoreProtocol
-    private let reviewStore: any HighlightClipReviewStoring
+    private let reviewStore: (any HighlightClipReviewStoring)?
     private let notificationCenter: NotificationCenter
     private let logger: AppLogging
     private var sessions: [TrainingSession] = []
@@ -66,7 +66,7 @@ final class TrainingSessionListViewModel: ObservableObject {
 
     init(
         store: TrainingSessionStoreProtocol,
-        reviewStore: any HighlightClipReviewStoring,
+        reviewStore: (any HighlightClipReviewStoring)? = nil,
         notificationCenter: NotificationCenter = .default,
         logger: AppLogging = AppLogger.shared,
     ) {
@@ -120,7 +120,7 @@ final class TrainingSessionListViewModel: ObservableObject {
         }
 
         do {
-            try await reviewStore.reconcile(
+            try await reviewStore?.reconcile(
                 validTrainingIdentities: Set(
                     loadedSessions.map {
                         HighlightClipReviewIdentityBuilder.trainingIdentity(for: $0)
@@ -307,7 +307,7 @@ final class TrainingSessionListViewModel: ObservableObject {
         var failureCount = 0
         for id in trainingSessionIDs.sorted(by: { $0.uuidString < $1.uuidString }) {
             do {
-                try await reviewStore.deleteRecords(forTrainingSessionID: id)
+                try await reviewStore?.deleteRecords(forTrainingSessionID: id)
             } catch {
                 failureCount += 1
                 failureCategories.insert(Self.reviewCleanupErrorCategory(error))

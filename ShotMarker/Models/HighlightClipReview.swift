@@ -14,7 +14,7 @@ struct HighlightClipMarkerReference: Identifiable, Equatable {
     let originalMatchedNumber: Int
 }
 
-enum HighlightClipConfirmationState: Equatable {
+nonisolated enum HighlightClipConfirmationState: String, Codable, Equatable, Sendable {
     case defaultValue
     case confirmed
 }
@@ -71,7 +71,7 @@ struct HighlightClipReviewItem: Identifiable, Equatable {
     }
 }
 
-struct ConfirmedHighlightSegment: Identifiable, Codable, Equatable {
+nonisolated struct ConfirmedHighlightSegment: Identifiable, Codable, Equatable, Sendable {
     let id: UUID
     let videoID: String
     let markerIDs: [UUID]

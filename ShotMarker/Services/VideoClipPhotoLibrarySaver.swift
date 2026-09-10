@@ -53,8 +53,8 @@
                     "photos.save.failed",
                     category: .photos,
                     message: "视频保存到相册失败",
-                    error: error,
-                    context: ["authorizationStatus": status.logDescription],
+                    error: VideoClipPhotoLibraryError.saveFailed,
+                    context: ["authorizationStatus": status.logDescription, "errorCategory": "saveFailed"],
                 )
                 throw error
             }
@@ -63,9 +63,13 @@
 
     enum VideoClipPhotoLibraryError: LocalizedError {
         case accessDenied
+        case saveFailed
 
         var errorDescription: String? {
-            "没有相册保存权限。请允许 ShotMarker 添加照片后再试。"
+            switch self {
+            case .accessDenied: "没有相册保存权限。请允许 ShotMarker 添加照片后再试。"
+            case .saveFailed: "无法保存到相册，请重试。"
+            }
         }
     }
 

@@ -42,6 +42,7 @@ final class PhoneWatchSyncService: NSObject, WCSessionDelegate {
     private let notificationCenter: NotificationCenter
     private let logger: AppLogging
     private let analytics: AnalyticsTracking
+    private let dataCutoverAt: Date?
     private let now: () -> Date
     private let decoder = JSONDecoder()
     private let encoder = JSONEncoder()
@@ -60,6 +61,7 @@ final class PhoneWatchSyncService: NSObject, WCSessionDelegate {
         notificationCenter: NotificationCenter = .default,
         logger: AppLogging = AppLogger.shared,
         analytics: AnalyticsTracking = NoopAnalyticsTracker(),
+        dataCutoverAt: Date? = nil,
         now: @escaping () -> Date = Date.init,
     ) {
         self.importer = importer
@@ -67,6 +69,7 @@ final class PhoneWatchSyncService: NSObject, WCSessionDelegate {
         self.notificationCenter = notificationCenter
         self.logger = logger
         self.analytics = analytics
+        self.dataCutoverAt = dataCutoverAt
         self.now = now
     }
 
@@ -148,6 +151,18 @@ final class PhoneWatchSyncService: NSObject, WCSessionDelegate {
                 error: error,
                 context: ["payloadByteCount": "\(payloadData.count)"],
             )
+            return
+        }
+
+        if let dataCutoverAt, payload.endedAt <= dataCutoverAt {
+            do { try transferAck(for: payload) }
+            catch {
+                logger.warning("sync.training.cutover.ack.failed", category: .sync,
+                    message: "旧训练确认发送失败，将等待重试", context: ["errorCategory": "ackTransfer"])
+                return
+            }
+            logger.info("sync.training.cutover.discarded", category: .sync,
+                message: "已丢弃数据切割前的旧训练", context: ["discardedCount": "1", "reason": "beforeCutover"])
             return
         }
 
