@@ -12,13 +12,6 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		FF80000A2FA7000000B04685 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = FF5C7E972FA46C7E00B04685 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = FF5C7E9E2FA46C7E00B04685;
-			remoteInfo = ShotMarker;
-		};
 		FF10000A2FA4800000B04685 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = FF5C7E972FA46C7E00B04685 /* Project object */;
@@ -40,6 +33,13 @@
 			remoteGlobalIDString = FF2000062FA5000000B04685;
 			remoteInfo = ShotMarkerWatchApp;
 		};
+		FF80000A2FA7000000B04685 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = FF5C7E972FA46C7E00B04685 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = FF5C7E9E2FA46C7E00B04685;
+			remoteInfo = ShotMarker;
+		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -57,19 +57,14 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
-		FF8000012FA7000000B04685 /* ShotMarkerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShotMarkerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF1000012FA4800000B04685 /* ShotMarkerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShotMarkerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF2000022FA5000000B04685 /* ShotMarkerWatchApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShotMarkerWatchApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF3000012FA5100000B04685 /* ShotMarkerWatchAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShotMarkerWatchAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		FF5C7E9F2FA46C7E00B04685 /* ShotMarker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ShotMarker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FF8000012FA7000000B04685 /* ShotMarkerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ShotMarkerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		FF8000022FA7000000B04685 /* ShotMarkerUITests */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ShotMarkerUITests;
-			sourceTree = "<group>";
-		};
 		FF1000022FA4800000B04685 /* ShotMarkerTests */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = ShotMarkerTests;
@@ -95,16 +90,14 @@
 			path = ShotMarker;
 			sourceTree = "<group>";
 		};
+		FF8000022FA7000000B04685 /* ShotMarkerUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = ShotMarkerUITests;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		FF8000042FA7000000B04685 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FF1000042FA4800000B04685 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -131,6 +124,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				FF7000032FA6000000B04685 /* SentrySPM in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FF8000042FA7000000B04685 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -165,29 +165,6 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		FF8000062FA7000000B04685 /* ShotMarkerUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = FF8000072FA7000000B04685 /* Build configuration list for PBXNativeTarget "ShotMarkerUITests" */;
-			buildPhases = (
-				FF8000032FA7000000B04685 /* Sources */,
-				FF8000042FA7000000B04685 /* Frameworks */,
-				FF8000052FA7000000B04685 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				FF80000B2FA7000000B04685 /* PBXTargetDependency */,
-			);
-			fileSystemSynchronizedGroups = (
-				FF8000022FA7000000B04685 /* ShotMarkerUITests */,
-			);
-			name = ShotMarkerUITests;
-			packageProductDependencies = (
-			);
-			productName = ShotMarkerUITests;
-			productReference = FF8000012FA7000000B04685 /* ShotMarkerUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 		FF1000062FA4800000B04685 /* ShotMarkerTests */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = FF1000072FA4800000B04685 /* Build configuration list for PBXNativeTarget "ShotMarkerTests" */;
@@ -283,6 +260,29 @@
 			productReference = FF5C7E9F2FA46C7E00B04685 /* ShotMarker.app */;
 			productType = "com.apple.product-type.application";
 		};
+		FF8000062FA7000000B04685 /* ShotMarkerUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FF8000072FA7000000B04685 /* Build configuration list for PBXNativeTarget "ShotMarkerUITests" */;
+			buildPhases = (
+				FF8000032FA7000000B04685 /* Sources */,
+				FF8000042FA7000000B04685 /* Frameworks */,
+				FF8000052FA7000000B04685 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				FF80000B2FA7000000B04685 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				FF8000022FA7000000B04685 /* ShotMarkerUITests */,
+			);
+			name = ShotMarkerUITests;
+			packageProductDependencies = (
+			);
+			productName = ShotMarkerUITests;
+			productReference = FF8000012FA7000000B04685 /* ShotMarkerUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -293,10 +293,6 @@
 				LastSwiftUpdateCheck = 2650;
 				LastUpgradeCheck = 2650;
 				TargetAttributes = {
-					FF8000062FA7000000B04685 = {
-						CreatedOnToolsVersion = 26.4.1;
-						TestTargetID = FF5C7E9E2FA46C7E00B04685;
-					};
 					FF1000062FA4800000B04685 = {
 						CreatedOnToolsVersion = 26.4.1;
 						TestTargetID = FF5C7E9E2FA46C7E00B04685;
@@ -310,6 +306,10 @@
 					};
 					FF5C7E9E2FA46C7E00B04685 = {
 						CreatedOnToolsVersion = 26.4.1;
+					};
+					FF8000062FA7000000B04685 = {
+						CreatedOnToolsVersion = 26.4.1;
+						TestTargetID = FF5C7E9E2FA46C7E00B04685;
 					};
 				};
 			};
@@ -340,13 +340,6 @@
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		FF8000052FA7000000B04685 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 		FF1000052FA4800000B04685 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -375,16 +368,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-/* End PBXResourcesBuildPhase section */
-
-/* Begin PBXSourcesBuildPhase section */
-		FF8000032FA7000000B04685 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
+		FF8000052FA7000000B04685 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
 		FF1000032FA4800000B04685 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -413,14 +406,16 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		FF8000032FA7000000B04685 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		FF80000B2FA7000000B04685 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = FF5C7E9E2FA46C7E00B04685 /* ShotMarker */;
-			targetProxy = FF80000A2FA7000000B04685 /* PBXContainerItemProxy */;
-		};
 		FF10000B2FA4800000B04685 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = FF5C7E9E2FA46C7E00B04685 /* ShotMarker */;
@@ -436,55 +431,14 @@
 			target = FF2000062FA5000000B04685 /* ShotMarkerWatchApp */;
 			targetProxy = FF6000032FA5E00000B04685 /* PBXContainerItemProxy */;
 		};
+		FF80000B2FA7000000B04685 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = FF5C7E9E2FA46C7E00B04685 /* ShotMarker */;
+			targetProxy = FF80000A2FA7000000B04685 /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
-		FF8000082FA7000000B04685 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z7B3D6C893;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.heji.ShotMarkerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = ShotMarker;
-			};
-			name = Debug;
-		};
-		FF8000092FA7000000B04685 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = Z7B3D6C893;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.heji.ShotMarkerUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SDKROOT = iphoneos;
-				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
-				SWIFT_APPROACHABLE_CONCURRENCY = YES;
-				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = ShotMarker;
-			};
-			name = Release;
-		};
 		FF1000082FA4800000B04685 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -877,18 +831,55 @@
 			};
 			name = Release;
 		};
+		FF8000082FA7000000B04685 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z7B3D6C893;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.heji.ShotMarkerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ShotMarker;
+			};
+			name = Debug;
+		};
+		FF8000092FA7000000B04685 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = Z7B3D6C893;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 26.4;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.heji.ShotMarkerUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_APPROACHABLE_CONCURRENCY = YES;
+				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = ShotMarker;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		FF8000072FA7000000B04685 /* Build configuration list for PBXNativeTarget "ShotMarkerUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				FF8000082FA7000000B04685 /* Debug */,
-				FF8000092FA7000000B04685 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
 		FF1000072FA4800000B04685 /* Build configuration list for PBXNativeTarget "ShotMarkerTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
@@ -930,6 +921,15 @@
 			buildConfigurations = (
 				FF5C7EAB2FA46C7F00B04685 /* Debug */,
 				FF5C7EAC2FA46C7F00B04685 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FF8000072FA7000000B04685 /* Build configuration list for PBXNativeTarget "ShotMarkerUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF8000082FA7000000B04685 /* Debug */,
+				FF8000092FA7000000B04685 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
