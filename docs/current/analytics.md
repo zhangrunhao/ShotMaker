@@ -1,7 +1,7 @@
 # ShotMarker 产品埋点
 
-- 最后复核：2026-08-19
-- 代码基线：main / 42c249a
+- 最后复核：2026-09-10
+- 代码范围：`codex/editable-highlight-tasks` / `1975784`
 - 用途：仅用于观察核心产品流程是否成功，不用于广告、跨公司跟踪或用户画像
 
 ## 当前结论
@@ -18,10 +18,10 @@
 
 | 事件 | 成功触发点 | 不触发的情况 |
 | --- | --- | --- |
-| `app_launch` | App 完成依赖组装后，每个进程启动记录一次 | 前后台切换、View 重建、Debug 或非 iPhone 运行 |
-| `training_sync_succeeded` | Watch payload 成功写入 iPhone 本地存储后、发送 ACK 前 | 解码或导入失败；ACK 失败不撤销已记录事件 |
-| `highlight_generate_succeeded` | Runner 返回最终 `completed` 任务且输出已进入稳定任务路径后 | 创建、排队、运行、取消、失败或输出移动失败 |
-| `highlight_save_succeeded` | 相册写入成功，且保存时间已写入并持久化到任务后 | 权限拒绝、缺少输出、相册写入或任务持久化失败 |
+| `app_launch` | 数据世代重置成功并完成依赖组装后，每个进程启动记录一次 | 前后台切换、View 重建、Debug 或非 iPhone 运行 |
+| `training_sync_succeeded` | Watch payload 成功写入 iPhone 本地存储后、发送 ACK 前 | 切割前旧载荷、解码或导入失败；ACK 失败不撤销已记录事件 |
+| `highlight_generate_succeeded` | 新成片已进入稳定路径且当前输出引用原子提交到任务后 | 创建、排队、运行、停止、失败、输出移动或任务提交失败 |
+| `highlight_save_succeeded` | 当前成片实际写入 Photos 成功后；随后持久化本地保存状态 | 权限拒绝、缺少输出或相册写入失败；成功后的本地状态写入失败不撤销实际保存事件 |
 
 Watch payload 重发或用户重复保存可能产生重复成功事件；网络失败或进程提前结束可能丢失事件。该链路不承诺恰好一次投递。
 
@@ -29,7 +29,7 @@ Watch payload 重发或用户重复保存可能产生重复成功事件；网络
 
 - 使用 `GET https://zhangrh.shop/track`。
 - 查询参数严格只有 `project=shotmarker`、`event`、`device_id`。
-- `device_id` 是保存在 UserDefaults 中的 12 位随机安装标识，只代表当前安装；卸载重装后重新生成。
+- `device_id` 是保存在 UserDefaults 中的 12 位随机安装标识，只代表当前安装；卸载重装或全量数据世代切割后重新生成。
 - 使用临时 URLSession、5 秒超时、不使用 Cookie 或持久缓存、不重试。
 - URL 构造、网络、TLS、超时或非 `204` 响应都会静默丢弃；失败不影响同步、集锦或相册保存。
 

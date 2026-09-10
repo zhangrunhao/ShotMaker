@@ -25,7 +25,6 @@ ShotMarker 对外网站、支持页和 how-to 由 `zhangrh.shop` 仓库维护，
 
 ## 正在进行的变更
 
-- [可编辑集锦任务与生成执行](changes/2026-09-03-editable-highlight-task-spec.md)：设计已确认，待实施；进入审核即创建独立任务，训练快照固定，生成执行可停止
 - [ShotMarker 1.2 App Store 提交](changes/2026-08-21-app-store-1-2-submission-plan.md)：候选构建、TestFlight、隐私披露、商店资料、审核与发布验收计划
 - [iOS 语音口令打点与技术统计](changes/2026-07-29-ios-voice-command-marking-spec.md)：设计已确认，尚未实现
 
@@ -42,6 +41,7 @@ YYYY-MM-DD-topic-plan.md
 
 archive 保存已经结束的设计、计划、讨论、排查、发布验证和旧文档。它不是当前事实来源。
 
+- 可编辑集锦任务与生成执行：[规格](archive/2026-09/2026-09-03-editable-highlight-task-spec.md)、[实施计划](archive/2026-09/2026-09-10-editable-highlight-task-plan.md)、[验证记录](archive/2026-09/2026-09-10-editable-highlight-task-validation.md)
 - 片段确认持久化与连续审核：[规格](archive/2026-09/2026-09-03-highlight-clip-confirmation-spec.md)、[实施计划](archive/2026-09/2026-09-03-highlight-clip-confirmation-plan.md)、[验证记录](archive/2026-09/2026-09-03-highlight-clip-confirmation-validation.md)
 
 archive 的规则只适用于 archive；其中的 spec、plan 和其他材料不受 current 的 300 行规则约束。
