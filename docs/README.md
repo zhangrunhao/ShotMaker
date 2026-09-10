@@ -41,7 +41,7 @@ YYYY-MM-DD-topic-plan.md
 
 archive 保存已经结束的设计、计划、讨论、排查、发布验证和旧文档。它不是当前事实来源。
 
-- 可编辑集锦任务与生成执行：[规格](archive/2026-09/2026-09-03-editable-highlight-task-spec.md)、[实施计划](archive/2026-09/2026-09-10-editable-highlight-task-plan.md)、[验证记录](archive/2026-09/2026-09-10-editable-highlight-task-validation.md)
+- 可编辑集锦任务与生成执行：[规格](archive/2026-09/2026-09-03-editable-highlight-task-spec.md)、[实施计划](archive/2026-09/2026-09-10-editable-highlight-task-plan.md)、[验证记录](archive/2026-09/2026-09-10-editable-highlight-task-validation.md)、[连续导航修复验证](archive/2026-09/2026-09-10-clip-review-navigation-validation.md)
 - 片段确认持久化与连续审核：[规格](archive/2026-09/2026-09-03-highlight-clip-confirmation-spec.md)、[实施计划](archive/2026-09/2026-09-03-highlight-clip-confirmation-plan.md)、[验证记录](archive/2026-09/2026-09-03-highlight-clip-confirmation-validation.md)
 
 archive 的规则只适用于 archive；其中的 spec、plan 和其他材料不受 current 的 300 行规则约束。

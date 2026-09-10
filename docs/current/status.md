@@ -1,7 +1,7 @@
 # ShotMarker 当前状态
 
 - 最后复核：2026-09-10
-- 验证代码：`codex/editable-highlight-tasks` / `1975784`
+- 验证代码：`da129c1`
 - 工程版本：1.3（Build 3）
 - 当前阶段：可编辑集锦任务已实施并完成 Simulator 验证；正式 Archive、真机和分发验收待执行
 
@@ -11,8 +11,9 @@ ShotMarker 已覆盖 iPhone/Watch 训练同步、视频准备、长期可编辑�
 
 ## 已验证事实
 
-- 完整 iPhone 测试 392 项、Watch 测试 31 项在 2026-09-10 通过，均无失败或跳过；保留全部既有回归。
-- 同日全新 DerivedData 的 Release generic iOS Simulator 构建通过；App/Watch dSYM 对应、隐私清单存在、DEBUG 入口不进入产物。
+- 完整 iPhone 测试 393 项在 2026-09-10 通过，含 14 项 UI 测试，均无失败或跳过；Watch 的最近完整验证为同日 `1975784` 的 31 项通过。
+- 同日当前代码 Release generic iOS Simulator 增量构建通过；App/Watch dSYM 对应、隐私清单存在、DEBUG 入口不进入产物。全新 DerivedData 构建的最近验证代码为 `1975784`。
+- 连续确认时按片段身份重建编辑器、局部时间轴及媒体加载；合并片段到远处片段、跨源视频及再次打开的真实媒体 UI 回归通过。
 - 专用 Simulator 的真实媒体流程验证任务创建/恢复/隔离、编辑、默认值和重置、实际播放/相册保存、主动/后台/异常退出停止、删除及数据世代升级。故障与文件边界由自动测试补充。
 - 正式 App 不再使用旧任务 Manager 或组合确认 Store；训练后续删除/合并/导入与任务无级联关系。
 - iPhone/Watch 当前 epoch 为 1；iPhone 使用固定 cutover ACK 丢弃旧 Watch 载荷，成功后的新数据继续保留。
@@ -37,3 +38,4 @@ ShotMarker 已覆盖 iPhone/Watch 训练同步、视频准备、长期可编辑�
 - [质量状态](quality.md)
 - [发布状态](release.md)
 - [任务验证记录](../archive/2026-09/2026-09-10-editable-highlight-task-validation.md)
+- [连续确认预览修复验证](../archive/2026-09/2026-09-10-clip-review-navigation-validation.md)

@@ -1,14 +1,14 @@
 # ShotMarker 技术架构
 
 - 最后复核：2026-09-10
-- 代码范围：`codex/editable-highlight-tasks` / `1975784`
+- 代码范围：`da129c1`
 
 ## 运行单元
 
 - ShotMarker：SwiftUI iPhone App；工程保留未验收的 iPad destination。
 - ShotMarkerWatchApp：SwiftUI、HealthKit、WatchConnectivity。
 - ShotMarkerTests：iPhone 单元、文件事务、媒体和服务测试。
-- ShotMarkerUITests：时间轴拖动、片段确认及任务权限/配置/最大字号测试；三个 DEBUG 专用入口不进入 Release。
+- ShotMarkerUITests：时间轴拖动、片段确认、真实媒体连续导航及任务权限/配置/最大字号测试；三个 DEBUG 专用入口不进入 Release。
 - ShotMarkerWatchAppTests：同步、outbox、运行时和数据世代重置测试。
 - Shared：同步载荷及 `AppDataResetCoordinator`。
 
@@ -55,6 +55,7 @@
 - `HighlightTaskPlanner` 复用默认范围规则；视频变化保留精确安全确认，确认项占位并分隔默认合并链；时长变化保留人工范围并更新默认基线，样式变化不规划。
 - `HighlightReviewSession` 持有任务 revision、审核 ViewModel 和单一播放器，统一释放请求、AVAsset、播放器 item/观察者、帧数据和准备文件。
 - 编辑器使用工作副本；Store 成功后更新卡片、汇总和连续导航，过期提交或写盘失败保留当前调整。
+- 导航目标使用片段 UUID 作为编辑器视图身份；连续确认切换时重新初始化局部时间轴和媒体任务，旧片段的退出清理只作用于旧播放器及胶片请求。
 - `HighlightClipReviewMediaProvider` 与 ViewModel 保留的缩略图数据均有上限；局部胶片退出时释放，审核不导出逐片段文件。
 - 本地照片资源先校验可用，审核和生成关闭网络访问；下载由配置页明确准备流程承担。
 - `HighlightRenderRunner` 只读取执行快照，使用已确认精确片段建立单一 AVMutableComposition/导出，并使用该执行独有临时目录。

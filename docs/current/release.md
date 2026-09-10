@@ -17,7 +17,7 @@
 - 自动签名已配置。
 - Release 使用 DWARF with dSYM。
 - iPhone target 从官方 `sentry-cocoa` 以源码产品 `SentrySPM` 链接 Sentry 9.26.0；Watch target 不链接。
-- 可编辑任务代码的 1.3（Build 3）Release Simulator 构建已于 2026-09-10 使用全新 DerivedData 通过；App/Watch dSYM 对应且 DEBUG 入口不进入产物。
+- 1.3（Build 3）Release Simulator 的当前验证代码为 `da129c1`：2026-09-10 增量构建通过，App/Watch dSYM 对应，DEBUG 入口及真实媒体测试场景不进入产物。全新 DerivedData 构建的最近验证代码为同日 `1975784`。
 - 2026-08-19 已生成自动签名的正式 iOS Archive 1.2（Build 1）；主 App 与 Watch App 的二进制 UUID 均有匹配 dSYM，Archive 不再嵌入独立 `Sentry.framework`。
 - 同日 Xcode Organizer Validate 成功，没有 warning/error 或 `Upload Symbols Failed`；该次验证未执行上传。
 - 尚未为 1.3（Build 3）执行正式签名 Archive、Organizer Validate 或上传。
